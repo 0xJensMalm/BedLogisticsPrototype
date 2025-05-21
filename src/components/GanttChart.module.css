@@ -37,21 +37,29 @@
 }
 .daysHeader {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
-  gap: 2px;
+  grid-template-columns: repeat(var(--days-count, 7), 1fr);
+  gap: 0;
   flex: 1;
+  border-bottom: 1px solid #edeaf7;
 }
+
 .dayCell {
   text-align: center;
   color: #b8b5c9;
   font-size: 0.95rem;
   padding: 0.2rem 0;
+  border-right: 1px solid #f0eaf7;
 }
+.dayCell:last-child {
+  border-right: none;
+}
+
 .row {
   display: flex;
   align-items: center;
   margin-bottom: 0.7rem;
 }
+
 .bedLabel {
   width: 160px;
   color: #7b5fc9;
@@ -60,12 +68,35 @@
 .timeline {
   display: grid;
   grid-template-columns: repeat(var(--days-count, 7), 1fr);
-  gap: 2px;
+  gap: 0;
   flex: 1;
   position: relative;
   min-height: 36px;
   overflow: hidden;
+  border-bottom: 1px solid #f3eefb;
 }
+.timeline > div {
+  /* Each patientBar is absolutely positioned, so we add horizontal lines using a pseudo background */
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    repeating-linear-gradient(
+      to right,
+      transparent,
+      transparent calc(100% / var(--days-count, 7) - 1px),
+      #f0eaf7 calc(100% / var(--days-count, 7) - 1px),
+      #f0eaf7 calc(100% / var(--days-count, 7))
+    );
+}
+.row:not(:last-child) .timeline {
+  border-bottom: 1px solid #edeaf7;
+}
+
 .patientBar {
   position: absolute;
   height: 28px;
