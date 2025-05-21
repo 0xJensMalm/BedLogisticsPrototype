@@ -1,0 +1,20 @@
+.toggleGroup {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+.toggle {
+  background: #f8f6fb;
+  border: none;
+  padding: 0.5rem 1.2rem;
+  border-radius: 1.2rem;
+  color: #7b5fc9;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.toggle.active {
+  background: #a786e6;
+  color: #fff;
+  font-weight: 600;
+}

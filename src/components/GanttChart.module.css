@@ -1,0 +1,91 @@
+.ganttWrapper {
+  background: #fff;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 12px 0 rgba(160, 130, 220, 0.10);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+.roomFrame {
+  border: 1px solid #edeaf7;
+  border-radius: 0.4rem;
+  margin-bottom: 2rem;
+  padding-bottom: 0.5rem;
+  background: #faf8fd;
+  box-shadow: 0 1px 6px 0 rgba(160,130,220,0.03);
+  transition: box-shadow 0.2s;
+  padding-left: 0.5rem;
+}
+.roomLabel {
+  font-weight: 600;
+  color: #7b5fc9;
+  font-size: 1.08rem;
+  letter-spacing: 0.01em;
+  margin-bottom: 0.2rem;
+  margin-left: 0.1rem;
+  text-align: left;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.bedHeader {
+  width: 160px;
+  font-weight: 600;
+  color: #7b5fc9;
+}
+.daysHeader {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(48px, 1fr));
+  gap: 2px;
+  flex: 1;
+}
+.dayCell {
+  text-align: center;
+  color: #b8b5c9;
+  font-size: 0.95rem;
+  padding: 0.2rem 0;
+}
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.7rem;
+}
+.bedLabel {
+  width: 160px;
+  color: #7b5fc9;
+  font-size: 1rem;
+}
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(var(--days-count, 7), 1fr);
+  gap: 2px;
+  flex: 1;
+  position: relative;
+  min-height: 36px;
+  overflow: hidden;
+}
+.patientBar {
+  position: absolute;
+  height: 28px;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  padding: 0 0.7rem;
+  color: #4a3c7a;
+  font-weight: 500;
+  box-shadow: 0 1px 4px rgba(160, 130, 220, 0.07);
+  top: 4px;
+  font-size: 0.98rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: background 0.2s, border 0.2s;
+  background: var(--patient-bg, #f5f5f5);
+  border: var(--patient-border, none);
+  opacity: var(--patient-opacity, 1);
+}
+.patientName {
+  z-index: 2;
+}
