@@ -1,0 +1,23 @@
+[
+  {
+    "id": "w1",
+    "name": "Bjørg Hansen",
+    "age": 82,
+    "priority": "High",
+    "appliedDate": "2025-05-15"
+  },
+  {
+    "id": "w2",
+    "name": "Knut Eriksen",
+    "age": 88,
+    "priority": "Medium",
+    "appliedDate": "2025-05-10"
+  },
+  {
+    "id": "w3",
+    "name": "Ragnhild Olsen",
+    "age": 91,
+    "priority": "High",
+    "appliedDate": "2025-05-18"
+  }
+]

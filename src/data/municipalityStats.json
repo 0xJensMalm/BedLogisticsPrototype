@@ -1,0 +1,20 @@
+[
+  {
+    "id": "nh1",
+    "name": "Solheim Nursing Home",
+    "capacity": 40,
+    "occupied": 36
+  },
+  {
+    "id": "nh2",
+    "name": "Fjordgløtt Care Center",
+    "capacity": 32,
+    "occupied": 29
+  },
+  {
+    "id": "nh3",
+    "name": "Løvlia Elderly Home",
+    "capacity": 28,
+    "occupied": 28
+  }
+]

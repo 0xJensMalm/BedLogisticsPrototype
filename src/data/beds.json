@@ -1,0 +1,11 @@
+[
+  { "id": "101-1", "label": "Bed 1", "roomId": "101" },
+  { "id": "101-2", "label": "Bed 2", "roomId": "101" },
+  { "id": "102-1", "label": "Bed 1", "roomId": "102" },
+  { "id": "103-1", "label": "Bed 1", "roomId": "103" },
+  { "id": "103-2", "label": "Bed 2", "roomId": "103" },
+  { "id": "104-1", "label": "Bed 1", "roomId": "104" },
+  { "id": "105-1", "label": "Bed 1", "roomId": "105" },
+  { "id": "105-2", "label": "Bed 2", "roomId": "105" },
+  { "id": "106-1", "label": "Bed 1", "roomId": "106" }
+]

@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import Tabs from './components/Tabs';
 import TimeRangeToggle from './components/TimeRangeToggle';
 import GanttChart from './components/GanttChart';
+import MunicipalityStats from './components/MunicipalityStats';
 import './App.css';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'Department' | 'Municipality' | 'Administration'>('Department');
   const [timeRange, setTimeRange] = useState<'week' | 'month'>('week');
   const [startDate, setStartDate] = useState<Date>(() => {
-    const d = new Date();
-    d.setHours(0,0,0,0);
-    return d;
+    // Set initial start date to match demo data for best Gantt chart visibility
+    return new Date('2025-05-01');
   });
 
   return (
@@ -24,7 +24,10 @@ const App: React.FC = () => {
             <GanttChart timeRange={timeRange} startDate={startDate} />
           </>
         )}
-        {/* Municipality and Administration tabs can be implemented here */}
+        {activeTab === 'Municipality' && (
+          <MunicipalityStats />
+        )}
+        {/* Administration tab can be implemented here */}
       </div>
     </div>
   );

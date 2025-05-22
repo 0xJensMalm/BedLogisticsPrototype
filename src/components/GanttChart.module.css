@@ -98,7 +98,7 @@
 }
 
 .patientBar {
-  position: absolute;
+  /* position: absolute; */ /* Temporarily commented out for testing width */
   height: 28px;
   border-radius: 0.5rem;
   display: flex;
@@ -107,7 +107,7 @@
   color: #4a3c7a;
   font-weight: 500;
   box-shadow: 0 1px 4px rgba(160, 130, 220, 0.07);
-  top: 4px;
+  /* top: 4px; */ /* Temporarily commented out for testing width */
   font-size: 0.98rem;
   overflow: hidden;
   white-space: nowrap;
@@ -116,6 +116,13 @@
   background: var(--patient-bg, #f5f5f5);
   border: var(--patient-border, none);
   opacity: var(--patient-opacity, 1);
+}
+.reservedBar {
+  background: repeating-linear-gradient(135deg, #e9e6f5 0px, #e9e6f5 8px, #d0cbe9 8px, #d0cbe9 16px) !important;
+  border: 1.5px solid #bdb6d6 !important;
+  color: #7b5fc9;
+  font-style: italic;
+  font-weight: 600;
 }
 .patientName {
   z-index: 2;

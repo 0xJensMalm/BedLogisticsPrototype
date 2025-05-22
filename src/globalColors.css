@@ -1,0 +1,13 @@
+:root {
+  --color-bg-main: #f8f6fb;
+  --color-bg-card: #f6f7fa;
+  --color-primary: #a7b8d9;
+  --color-secondary: #b8e0d2;
+  --color-accent: #e3d8f6;
+  --color-progress: #7b2ff2;
+  --color-muted: #eaeaea;
+  --color-table-header: #e3d8f6;
+  --color-table-row: #f8f6fb;
+  --color-text-main: #222;
+  --color-text-muted: #888;
+}

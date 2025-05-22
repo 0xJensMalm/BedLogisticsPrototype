@@ -1,6 +1,9 @@
 import React from 'react';
 import { rooms, Room, Bed, Patient } from '../data/bedData';
 import styles from './GanttChart.module.css';
+import patients from '../data/patients.json';
+console.log('Direct import patients:', patients);
+
 
 type TimeRange = 'week' | 'month';
 
@@ -32,9 +35,19 @@ const statusStyles: Record<string, { bg: string; border?: string; opacity?: numb
     bg: '#f2f2f2', // light grey
     opacity: 0.5,
   },
+  reserved: {
+    bg: 'repeating-linear-gradient(135deg, #e9e6f5 0px, #e9e6f5 8px, #d0cbe9 8px, #d0cbe9 16px)',
+    border: '1.5px solid #bdb6d6',
+    opacity: 1,
+  },
 };
 
 const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
+  // DEBUG LOGS
+  console.log('--- GanttChart DEBUG ---');
+  console.log('rooms from bedData:', rooms);
+  console.log('patients direct import:', patients);
+  console.log('timeRange:', timeRange, 'startDate:', startDate);
   // Calculate days for week/month view
   const days = React.useMemo(() => {
     let arr: Date[] = [];
@@ -78,6 +91,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
                   // Calculate overlap between patient stay and visible timeline
                   const patientStart = new Date(patient.inDate);
                   const patientEnd = new Date(patient.outDate);
+
                   const rangeStart = days[0];
                   const rangeEnd = days[days.length - 1];
                   // If no overlap, skip
@@ -87,6 +101,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
                   // The last day the patient is present (inclusive)
                   const barLast = days.findIndex(d => d > patientEnd);
                   const barEnd = barLast === -1 ? days.length : barLast;
+
                   if (barStart === -1 || barStart >= barEnd) return null;
                   const styleVars: React.CSSProperties = {
                     gridColumn: `${barStart + 1} / ${barEnd + 1}`,
@@ -97,11 +112,21 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
                   return (
                     <div
                       key={patient.id}
-                      className={styles.patientBar}
+                      className={
+                        patient.status === 'reserved'
+                          ? `${styles.patientBar} ${styles.reservedBar}`
+                          : styles.patientBar
+                      }
                       style={styleVars}
-                      title={`${patient.name}\n${patient.status}\n${patient.inDate}–${patient.outDate}\n${patient.needs}`}
+                      title={
+                        patient.status === 'reserved'
+                          ? `Reserved\n${patient.inDate}–${patient.outDate}`
+                          : `${patient.name}\n${patient.status}\n${patient.inDate}–${patient.outDate}\n${patient.needs}`
+                      }
                     >
-                      <span className={styles.patientName}>{patient.name}</span>
+                      <span className={styles.patientName}>
+                        {patient.status === 'reserved' ? 'Reserved' : patient.name}
+                      </span>
                     </div>
                   );
                 })}
