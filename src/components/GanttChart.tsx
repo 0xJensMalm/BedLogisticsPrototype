@@ -79,10 +79,25 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
       </div>
       {rooms.map((room) => (
         <div key={room.id} className={styles.roomFrame}>
-          <div className={styles.roomLabel}>{room.label}</div>
-          {room.beds.map((bed) => (
-            <div key={bed.id} className={styles.row}>
-              <div className={styles.bedLabel}>{bed.label}</div>
+          {/* Simplified room title - just the name */}
+          <div className={styles.roomTitle}>{room.label}</div>
+
+          {room.beds.map((bed, bedIndex) => (
+            <div key={bed.id} className={styles.row}> {/* Each bed row */}
+              <div className={styles.bedInfoCell}> {/* Container for bed label area (160px wide) */}
+                {/* Render capabilities for THIS bed's row if capabilities exist */}
+                {room.capabilities && room.capabilities.length > 0 && (
+                  <div className={styles.stackedRoomCapabilities}>
+                    {room.capabilities.map((capability, capIndex) => (
+                      <span key={capIndex} className={styles.capabilityTag}>
+                        {capability}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {/* Bed name (e.g., 'Bed 1') */}
+                <div className={styles.bedNameLabel}>{bed.label}</div>
+              </div>
               <div
                 className={styles.timeline}
                 style={{ ['--days-count' as any]: days.length }}
@@ -127,6 +142,12 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
                       <span className={styles.patientName}>
                         {patient.status === 'reserved' ? 'Reserved' : patient.name}
                       </span>
+                      {/* Add patient need tag if not reserved and needs exist */}
+                      {patient.status !== 'reserved' && patient.needs && (
+                        <span className={styles.patientNeedTag}>
+                          {patient.needs}
+                        </span>
+                      )}
                     </div>
                   );
                 })}

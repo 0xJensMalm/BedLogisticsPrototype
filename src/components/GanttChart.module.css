@@ -15,14 +15,25 @@
   transition: box-shadow 0.2s;
   padding-left: 0.5rem;
 }
-.roomLabel {
+
+.roomTitle {
   font-weight: 600;
   color: #7b5fc9;
   font-size: 1.08rem;
   letter-spacing: 0.01em;
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.5rem;
   margin-left: 0.1rem;
   text-align: left;
+}
+
+.capabilityTag {
+  background-color: #e9e6f5; /* Light purple, similar to reserved bar */
+  color: #5a4c8a; /* Darker purple text */
+  padding: 0.15rem 0.4rem;
+  border-radius: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid #d0cbe9;
 }
 
 .headerRow {
@@ -56,15 +67,36 @@
 
 .row {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Align bedInfoCell and timeline vertically */
   margin-bottom: 0.7rem;
 }
 
-.bedLabel {
+.bedInfoCell {
   width: 160px;
+  display: flex;
+  flex-direction: row; /* Capabilities and Bed Name side-by-side initially */
+  align-items: flex-start; /* Align items to the top of the cell */
+  /* If you want bed name to be to the right of stacked tags, this flex-direction is correct.
+     The stacking of tags happens *inside* .stackedRoomCapabilities */
+}
+
+.stackedRoomCapabilities {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* Tags align to their left */
+  gap: 0.2rem; /* Smaller gap for compact stacking */
+  margin-right: 0.5rem; /* Space between tags and bed name */
+}
+
+.bedNameLabel {
+  /* width: auto; /* Takes remaining space in bedInfoCell if needed, or fixed if desired */
   color: #7b5fc9;
   font-size: 1rem;
+  padding-left: 0; /* Reset padding, alignment handled by flex in bedInfoCell */
+  /* If tags are present, bedNameLabel will be to their right. */
+  /* If no tags, it will be at the start of bedInfoCell. */
 }
+
 .timeline {
   display: grid;
   grid-template-columns: repeat(var(--days-count, 7), 1fr);
@@ -75,9 +107,7 @@
   overflow: hidden;
   border-bottom: 1px solid #f3eefb;
 }
-.timeline > div {
-  /* Each patientBar is absolutely positioned, so we add horizontal lines using a pseudo background */
-}
+
 .timeline::before {
   content: '';
   position: absolute;
@@ -98,16 +128,14 @@
 }
 
 .patientBar {
-  /* position: absolute; */ /* Temporarily commented out for testing width */
   height: 28px;
   border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
+  display: flex; /* Changed to flex */
+  align-items: center; /* Vertically align name and tag */
   padding: 0 0.7rem;
   color: #4a3c7a;
   font-weight: 500;
   box-shadow: 0 1px 4px rgba(160, 130, 220, 0.07);
-  /* top: 4px; */ /* Temporarily commented out for testing width */
   font-size: 0.98rem;
   overflow: hidden;
   white-space: nowrap;
@@ -117,6 +145,30 @@
   border: var(--patient-border, none);
   opacity: var(--patient-opacity, 1);
 }
+
+.patientName {
+  z-index: 2;
+  /* Allow patient name to shrink if needed, and prevent it from pushing tag out */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1; 
+}
+
+.patientNeedTag {
+  background-color: #d1e7dd; /* A soft green, for example */
+  color: #0f5132; /* Darker green text */
+  padding: 0.1rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  margin-left: 0.5rem;
+  white-space: nowrap; /* Prevent tag text from wrapping */
+  flex-shrink: 0; /* Prevent tag from shrinking */
+  position: relative; /* Ensure z-index is effective */
+  z-index: 3; /* Higher than patientName and bar's base */
+}
+
 .reservedBar {
   background: repeating-linear-gradient(135deg, #e9e6f5 0px, #e9e6f5 8px, #d0cbe9 8px, #d0cbe9 16px) !important;
   border: 1.5px solid #bdb6d6 !important;
@@ -124,6 +176,7 @@
   font-style: italic;
   font-weight: 600;
 }
-.patientName {
-  z-index: 2;
+
+.reservedBar .patientNeedTag {
+  display: none; /* Hide need tag for reserved patients, already handled by JSX */
 }

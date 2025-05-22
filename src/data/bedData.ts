@@ -1,3 +1,21 @@
+import beds from './beds.json';
+import patients from './patients.json';
+
+// Define room-specific capabilities here for easy editing
+const roomSpecificCapabilities: Record<string, string[]> = {
+  '101': ['Akutt', 'Takheis', ],
+  '102': ['Smitterom'], // Example: Room 102 now has 'Isolation'
+  '103': [],
+  '104': [],
+  '105': ['KAD', ],
+  '106': ['KAD', ],
+  // Add more rooms and their capabilities like this:
+  // '104': ['Bariatric Bed', 'Hoist Available'],
+  // '105': ['Telemetry', 'Post-Op Recovery'],
+};
+
+const defaultCapabilities: string[] = ['Korttidsrom'];
+
 export type PatientStatus = 'active' | 'paused' | 'planned' | 'reserved';
 
 export interface Patient {
@@ -19,22 +37,19 @@ export interface Room {
   id: string;
   label: string;
   beds: Bed[];
+  capabilities: string[];
 }
 
-
-
-
-import beds from './beds.json';
-import patients from './patients.json';
-
 // Group beds by roomId
-const roomsMap: Record<string, { id: string; label: string; beds: any[] }> = {};
+const roomsMap: Record<string, { id: string; label: string; beds: any[]; capabilities: string[] }> = {};
 beds.forEach(bed => {
   if (!roomsMap[bed.roomId]) {
     roomsMap[bed.roomId] = {
       id: bed.roomId,
       label: `Room ${bed.roomId}`,
       beds: [],
+      // Assign capabilities from the lookup object, or use default
+      capabilities: roomSpecificCapabilities[bed.roomId] || defaultCapabilities,
     };
   }
   // Attach patients sorted by inDate
@@ -49,4 +64,3 @@ beds.forEach(bed => {
 });
 
 export const rooms: Room[] = Object.values(roomsMap);
-

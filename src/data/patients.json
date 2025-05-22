@@ -2,7 +2,7 @@
   { "id": "p1", "name": "Ola Nordmann", "bedId": "101-1", "status": "active", "inDate": "2025-05-01", "outDate": "2025-05-20", "needs": "Rehab" },
   { "id": "p2", "name": "Kari Nordmann", "bedId": "101-1", "status": "planned", "inDate": "2025-05-22", "outDate": "2025-06-10", "needs": "Observation" },
   { "id": "p3", "name": "Per Hansen", "bedId": "101-2", "status": "active", "inDate": "2025-05-03", "outDate": "2025-05-25", "needs": "Short-term" },
-  { "id": "p4", "name": "Liv Johansen", "bedId": "102-1", "status": "active", "inDate": "2025-05-01", "outDate": "2025-05-30", "needs": "Long-term" },
+  { "id": "p4", "name": "Liv Johansen", "bedId": "102-1", "status": "active", "inDate": "2025-05-01", "outDate": "2025-05-30", "needs": "Covid" },
   { "id": "p5", "name": "Anne Olsen", "bedId": "103-1", "status": "active", "inDate": "2025-05-10", "outDate": "2025-05-28", "needs": "Recovery" },
   { "id": "p6", "name": "Erik Berg", "bedId": "103-2", "status": "active", "inDate": "2025-05-05", "outDate": "2025-05-29", "needs": "Palliative" },
   { "id": "p7", "name": "Reserved", "bedId": "104-1", "status": "reserved", "inDate": "2025-05-01", "outDate": "2025-05-10", "needs": "Reserved" },
