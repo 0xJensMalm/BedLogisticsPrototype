@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Tabs from './components/Tabs';
 import TimeRangeToggle from './components/TimeRangeToggle';
 import GanttChart from './components/GanttChart';
-import MunicipalityStats from './components/MunicipalityStats';
+import MunicipalityView from './views/MunicipalityView/MunicipalityView';
 import './App.css';
 
 const App: React.FC = () => {
@@ -25,7 +25,7 @@ const App: React.FC = () => {
           </>
         )}
         {activeTab === 'Municipality' && (
-          <MunicipalityStats />
+          <MunicipalityView />
         )}
         {/* Administration tab can be implemented here */}
       </div>
