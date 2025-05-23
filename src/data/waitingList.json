@@ -4,20 +4,95 @@
     "name": "Bjørg Hansen",
     "age": 82,
     "priority": "High",
-    "appliedDate": "2025-05-15"
+    "appliedDate": "2025-05-15",
+    "needs": ["ADL Support", "Mobilization", "Safety"]
   },
   {
     "id": "w2",
     "name": "Knut Eriksen",
     "age": 88,
     "priority": "Medium",
-    "appliedDate": "2025-05-10"
+    "appliedDate": "2025-05-10",
+    "needs": ["Ceiling Hoist", "Wound Care"]
   },
   {
     "id": "w3",
     "name": "Ragnhild Olsen",
     "age": 91,
     "priority": "High",
-    "appliedDate": "2025-05-18"
+    "appliedDate": "2025-05-18",
+    "needs": ["Cognitive Impairment", "Nutrition", "Coping Support"]
+  },
+  {
+    "id": "w4",
+    "name": "Sverre Pettersen",
+    "age": 79,
+    "priority": "Medium",
+    "appliedDate": "2025-05-01",
+    "needs": ["Mobilization", "Pain Relief"]
+  },
+  {
+    "id": "w5",
+    "name": "Ingrid Kristiansen",
+    "age": 85,
+    "priority": "High",
+    "appliedDate": "2025-05-20",
+    "needs": ["ADL Support", "Cognitive Impairment", "Safety"]
+  },
+  {
+    "id": "w6",
+    "name": "Harald Bakke",
+    "age": 90,
+    "priority": "Low",
+    "appliedDate": "2025-04-25",
+    "needs": ["Social Contact", "Activity"]
+  },
+  {
+    "id": "w7",
+    "name": "Solveig Lien",
+    "age": 77,
+    "priority": "Medium",
+    "appliedDate": "2025-05-12",
+    "needs": ["Wound Care", "Medical Follow-up"]
+  },
+  {
+    "id": "w8",
+    "name": "Oddvar Nilsen",
+    "age": 83,
+    "priority": "High",
+    "appliedDate": "2025-05-22",
+    "needs": ["Ceiling Hoist", "ADL Support", "Palliative Care"]
+  },
+  {
+    "id": "w9",
+    "name": "Berit Andersen",
+    "age": 89,
+    "priority": "Low",
+    "appliedDate": "2025-05-05",
+    "needs": ["Nutrition", "Safety"]
+  },
+  {
+    "id": "w10",
+    "name": "Geir Larsen",
+    "age": 75,
+    "priority": "Medium",
+    "appliedDate": "2025-05-19",
+    "needs": ["Mobilization", "Rehabilitation"]
+  },
+  {
+    "id": "w11",
+    "name": "Astrid Johansen",
+    "age": 93,
+    "priority": "High",
+    "appliedDate": "2025-05-21",
+    "needs": ["Cognitive Impairment", "Safety", "ADL Support"]
+  },
+  {
+    "id": "w12",
+    "name": "Finn Martinsen",
+    "age": 81,
+    "priority": "Low",
+    "appliedDate": "2025-04-30",
+    "needs": ["Social Contact", "Pain Relief"]
   }
 ]

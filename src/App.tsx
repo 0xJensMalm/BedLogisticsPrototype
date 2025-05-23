@@ -27,7 +27,11 @@ const App: React.FC = () => {
         {activeTab === 'Municipality' && (
           <MunicipalityView />
         )}
-        {/* Administration tab can be implemented here */}
+        {activeTab === 'Administration' && (
+          <div>
+            <p>Administration tab content will be here.</p>
+          </div>
+        )}
       </div>
     </div>
   );

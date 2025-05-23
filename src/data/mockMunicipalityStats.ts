@@ -49,28 +49,28 @@ export const mockHistoricalOccupancySeries: HistoricalDataPoint[] = [
 export const mockOrganizations: OrganizationStats[] = [
   {
     id: "org1",
-    name: "Solbakken Sykehjem",
+    name: "Solbakken Nursing Home",
     totalBeds: 120,
     occupancyRate: 92,
     patientsOnWaitingList: 15,
   },
   {
     id: "org2",
-    name: "Åse Bo- og Aktivitetssenter",
+    name: "Åse Living and Activity Center",
     totalBeds: 80,
     occupancyRate: 85,
     patientsOnWaitingList: 10,
   },
   {
     id: "org3",
-    name: "Haugåstunet Sykehjem",
+    name: "Haugåstunet Nursing Home",
     totalBeds: 150,
     occupancyRate: 80,
     patientsOnWaitingList: 25,
   },
   {
     id: "org4",
-    name: "Riska Bo- og Omsorgssenter",
+    name: "Riska Living and Care Center",
     totalBeds: 100,
     occupancyRate: 95,
     patientsOnWaitingList: 5,

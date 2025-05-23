@@ -10,4 +10,7 @@
   { "id": "p9", "name": "Jonas Dahl", "bedId": "105-1", "status": "active", "inDate": "2025-05-02", "outDate": "2025-05-22", "needs": "Respite" },
   { "id": "p10", "name": "Siri Lunde", "bedId": "105-2", "status": "active", "inDate": "2025-05-09", "outDate": "2025-05-27", "needs": "Observation" },
   { "id": "p11", "name": "Pål Moe", "bedId": "106-1", "status": "planned", "inDate": "2025-05-15", "outDate": "2025-06-05", "needs": "Long-term" }
+
+
 ]
+

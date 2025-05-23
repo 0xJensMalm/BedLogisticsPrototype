@@ -3,18 +3,18 @@ import patients from './patients.json';
 
 // Define room-specific capabilities here for easy editing
 const roomSpecificCapabilities: Record<string, string[]> = {
-  '101': ['Akutt', 'Takheis', ],
-  '102': ['Smitterom'], // Example: Room 102 now has 'Isolation'
+  '101': ['Acute Care', 'Ceiling Hoist'], 
+  '102': ['Isolation Room'],             
   '103': [],
   '104': [],
-  '105': ['KAD', ],
-  '106': ['KAD', ],
+  '105': ['Catheter'],                   
+  '106': ['Catheter'],                   
   // Add more rooms and their capabilities like this:
   // '104': ['Bariatric Bed', 'Hoist Available'],
   // '105': ['Telemetry', 'Post-Op Recovery'],
 };
 
-const defaultCapabilities: string[] = ['Korttidsrom'];
+const defaultCapabilities: string[] = ['Short-term Room'];
 
 export type PatientStatus = 'active' | 'paused' | 'planned' | 'reserved';
 
