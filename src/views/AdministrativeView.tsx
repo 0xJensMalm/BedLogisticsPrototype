@@ -1,11 +1,32 @@
 import React, { useMemo, useState } from 'react';
 import { vossMunicipality } from '../data/municipalityData';
+import { WaitingListItem } from '../data/dataTypes';
 import { allPatients } from '../data/patients';
 import { waitingList } from '../data/waitingList';
 import styles from './AdministrativeView.module.css';
 import { Organisation, Department, Room as RoomType, Bed as BedType, Patient as PatientType, Municipality } from '../data/dataTypes'; // Corrected path, removed PatientStatus
 import GanttChart from '../components/GanttChart'; // Corrected path
 import TimeRangeToggle from '../components/TimeRangeToggle';
+
+// Helper function to add days to a date
+const addDays = (date: Date, days: number): Date => {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+};
+
+// Helper function to format date as YYYY-MM-DD
+const formatDate = (date: Date): string => {
+  return date.toISOString().split('T')[0];
+};
+
+// Helper function to calculate waiting days
+const calculateWaitingDays = (appliedDateStr: string, currentDateStr: string): number => {
+  const appliedDate = new Date(appliedDateStr);
+  const currentDate = new Date(currentDateStr);
+  const diffTime = Math.abs(currentDate.getTime() - appliedDate.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+};
 
 interface MunicipalityStats {
   totalOrganisations: number;
@@ -51,6 +72,7 @@ const AdministrativeView: React.FC = () => {
   const [timeRange, setTimeRange] = useState<'week' | 'month'>('week');
   const [startDate] = useState<Date>(new Date('2025-05-01')); // Fixed demo date
   const [expandedOrganisations, setExpandedOrganisations] = useState<Record<string, boolean>>({});
+  const MOCK_CURRENT_DATE_STR = '2025-06-02';
 
   const municipalityOverallStats: MunicipalityStats = useMemo(() => {
     const currentMunicipality: Municipality = vossMunicipality;
@@ -132,6 +154,120 @@ const AdministrativeView: React.FC = () => {
     });
   }, []);
 
+
+  interface SuggestedVacancy {
+    id: string;
+    organisationName: string;
+    departmentName: string;
+    roomLabel: string;
+    bedLabel: string;
+    availabilityStatus: string; // 'Available Now' or 'Available Soon'
+    availabilityDate?: string; // YYYY-MM-DD, if 'Available Soon'
+    color: 'green' | 'yellow';
+  }
+
+  const processedWaitingList = useMemo(() => {
+    return waitingList
+      .map(item => ({
+        ...item,
+        waitingDays: calculateWaitingDays(item.appliedDate, MOCK_CURRENT_DATE_STR),
+      }))
+      .sort((a, b) => {
+        const priorityOrder = { High: 1, Medium: 2, Low: 3 };
+        if (priorityOrder[a.priority] !== priorityOrder[b.priority]) {
+          return priorityOrder[a.priority] - priorityOrder[b.priority];
+        }
+        return b.waitingDays - a.waitingDays;
+      })
+      .slice(0, 20); // Show 20 patients
+  }, [waitingList, MOCK_CURRENT_DATE_STR]);
+
+  const suggestedVacancies = useMemo(() => {
+    const allAvailableNow: SuggestedVacancy[] = [];
+    const allAvailableSoon: SuggestedVacancy[] = [];
+    const currentMockDate = new Date(MOCK_CURRENT_DATE_STR);
+
+    vossMunicipality.organisations.forEach(org => {
+      org.departments.forEach(dept => {
+        dept.rooms.forEach(room => {
+          room.beds.forEach(bed => {
+            const assignedPatient = allPatients.find(
+              p => p.currentBedId === bed.id && (p.status === 'active' || p.status === 'planned')
+            );
+
+            if (!assignedPatient || !assignedPatient.stayEndDate) {
+              allAvailableNow.push({
+                id: `${org.id}-${dept.id}-${room.id}-${bed.id}-now`,
+                organisationName: org.name,
+                departmentName: dept.name,
+                roomLabel: room.label,
+                bedLabel: bed.label,
+                availabilityStatus: 'Available Now',
+                color: 'green',
+              });
+            } else {
+              const patientEndDate = new Date(assignedPatient.stayEndDate);
+              if (patientEndDate < currentMockDate) { // Already ended
+                allAvailableNow.push({
+                  id: `${org.id}-${dept.id}-${room.id}-${bed.id}-ended`,
+                  organisationName: org.name,
+                  departmentName: dept.name,
+                  roomLabel: room.label,
+                  bedLabel: bed.label,
+                  availabilityStatus: 'Available Now',
+                  color: 'green',
+                });
+              } else {
+                const daysUntilEnd = (patientEndDate.getTime() - currentMockDate.getTime()) / (1000 * 60 * 60 * 24);
+                if (daysUntilEnd >= 0 && daysUntilEnd <= 2) { 
+                  allAvailableSoon.push({
+                    id: `${org.id}-${dept.id}-${room.id}-${bed.id}-soon`,
+                    organisationName: org.name,
+                    departmentName: dept.name,
+                    roomLabel: room.label,
+                    bedLabel: bed.label,
+                    availabilityStatus: `Available from ${formatDate(addDays(patientEndDate, 1))}`,
+                    availabilityDate: formatDate(addDays(patientEndDate, 1)),
+                    color: 'yellow',
+                  });
+                }
+              }
+            }
+          });
+        });
+      });
+    });
+
+    // Sort within categories before slicing
+    const sortFn = (a: SuggestedVacancy, b: SuggestedVacancy) => {
+      if (a.availabilityDate && b.availabilityDate) {
+        const dateComparison = new Date(a.availabilityDate).getTime() - new Date(b.availabilityDate).getTime();
+        if (dateComparison !== 0) return dateComparison;
+      }
+      const orgComp = a.organisationName.localeCompare(b.organisationName);
+      if (orgComp !== 0) return orgComp;
+      const deptComp = a.departmentName.localeCompare(b.departmentName);
+      if (deptComp !== 0) return deptComp;
+      const roomComp = a.roomLabel.localeCompare(b.roomLabel);
+      if (roomComp !== 0) return roomComp;
+      return a.bedLabel.localeCompare(b.bedLabel);
+    };
+
+    allAvailableNow.sort(sortFn);
+    allAvailableSoon.sort(sortFn);
+
+    const finalVacancies: SuggestedVacancy[] = [];
+    finalVacancies.push(...allAvailableNow.slice(0, 3));
+    finalVacancies.push(...allAvailableSoon.slice(0, 9));
+    
+    // Final sort to ensure green are first if any available soon were pushed before available now (e.g. if less than 3 'now' spots)
+    return finalVacancies.sort((a,b) => {
+      if (a.color === 'green' && b.color === 'yellow') return -1;
+      if (a.color === 'yellow' && b.color === 'green') return 1;
+      return sortFn(a,b); // Use the detailed sort for items of the same color
+    });
+
+  }, [vossMunicipality, allPatients, MOCK_CURRENT_DATE_STR]);
 
   const municipalityGanttData: OrganisationGanttData[] = useMemo(() => {
     return vossMunicipality.organisations.map(org => {
@@ -270,6 +406,69 @@ const AdministrativeView: React.FC = () => {
         </div>
       </div>
       */}
+
+      {/* Waiting List and Suggested Vacancies Section */}
+      <div className={styles.waitingListSection}>
+        <div className={styles.waitingListColumn}>
+          <h2>Waiting List</h2>
+          {processedWaitingList.length > 0 ? (
+            <table className={styles.waitingListTable}>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Waiting Days</th>
+                  <th>Priority</th>
+                  <th>Needs</th>
+                  <th>Location</th> {/* New Column */}
+                </tr>
+              </thead>
+              <tbody>
+                {processedWaitingList.map((item: WaitingListItem & { waitingDays: number }) => (
+                  <tr key={item.id}>
+                    <td>{item.name}</td>
+                    <td>{item.waitingDays}</td>
+                    <td>{item.priority}</td>
+                    <td>{item.needs.join(', ')}</td>
+                    <td>N/A</td> {/* Placeholder for Location Data */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No patients currently on the waiting list.</p>
+          )}
+        </div>
+
+        <div className={styles.vacanciesColumn}>
+          <h2>Suggested Vacant Spots</h2>
+          {suggestedVacancies.length > 0 ? (
+            <table className={styles.vacanciesTable}>
+              <thead>
+                <tr>
+                  <th>Organisation</th>
+                  <th>Department</th>
+                  <th>Room</th>
+                  <th>Bed</th>
+                  <th>Availability</th>
+                </tr>
+              </thead>
+              <tbody>
+                {suggestedVacancies.map((vacancy: SuggestedVacancy) => (
+                  <tr key={vacancy.id} className={vacancy.color === 'green' ? styles.availableNow : styles.availableSoon}>
+                    <td>{vacancy.organisationName}</td>
+                    <td>{vacancy.departmentName}</td>
+                    <td>{vacancy.roomLabel}</td>
+                    <td>{vacancy.bedLabel}</td>
+                    <td>{vacancy.availabilityStatus}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No immediate or upcoming vacancies found.</p>
+          )}
+        </div>
+      </div>
 
       {/* Municipality-Wide Occupancy Gantt Chart Section (remains the same) */}
       <div style={{ marginTop: '40px', borderTop: '1px solid #ddd', paddingTop: '20px' }}>

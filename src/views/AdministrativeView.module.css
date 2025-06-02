@@ -165,3 +165,76 @@
   border-bottom: 1px solid #eee;
   padding-bottom: 5px;
 }
+
+/* Waiting List and Vacancies Section */
+.waitingListSection {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.waitingListColumn,
+.vacanciesColumn {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.waitingListColumn h2,
+.vacanciesColumn h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.3em;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 10px;
+}
+
+.waitingListTable,
+.vacanciesTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9em;
+}
+
+.waitingListTable th,
+.waitingListTable td,
+.vacanciesTable th,
+.vacanciesTable td {
+  border: 1px solid #dee2e6;
+  padding: 10px;
+  text-align: left;
+}
+
+.waitingListTable th,
+.vacanciesTable th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+  color: #495057;
+}
+
+.waitingListTable tbody tr:nth-child(odd),
+.vacanciesTable tbody tr:nth-child(odd) {
+  background-color: #fdfdfe; /* Slightly off-white for odd rows */
+}
+
+.waitingListTable tbody tr:hover,
+.vacanciesTable tbody tr:hover {
+  background-color: #f1f3f5;
+}
+
+.vacanciesTable .availableNow td {
+  background-color: #d4edda !important; /* Light green - using important to ensure override if needed */
+  color: #155724;
+}
+
+.vacanciesTable .availableSoon td {
+  background-color: #fff3cd !important; /* Light yellow - using important to ensure override if needed */
+  color: #856404;
+}
