@@ -1,7 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Department, Room as RoomType, Bed as BedType, Patient as PatientType } from '../data/dataTypes';
 import { vossMunicipality } from '../data/municipalityData';
-import { allPatients } from '../data/patients';
+import { allPatients as initialPatients } from '../data/patients'; // Renamed to avoid conflict with state
+import PatientEditSidebar from '../components/PatientEditSidebar';
 import GanttChart from '../components/GanttChart'; 
 import TimeRangeToggle from '../components/TimeRangeToggle'; 
 
@@ -16,6 +17,9 @@ interface GanttRoom extends Omit<RoomType, 'beds'> {
 }
 
 const DepartmentView: React.FC = () => {
+  const [patientsData, setPatientsData] = useState<PatientType[]>(initialPatients);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [selectedPatientForEdit, setSelectedPatientForEdit] = useState<PatientType | null>(null);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string | undefined>();
   const [activeDepartmentGanttData, setActiveDepartmentGanttData] = useState<GanttRoom[]>([]);
   const [timeRange, setTimeRange] = useState<'week' | 'month'>('week');
@@ -54,7 +58,7 @@ const DepartmentView: React.FC = () => {
     if (foundDepartment) {
       const preparedGanttData: GanttRoom[] = foundDepartment.rooms.map(room => {
         const bedsWithPatients: GanttRoom['beds'][0][] = room.beds.map(bed => {
-          const assignedPatients: PatientType[] = allPatients.filter(
+          const assignedPatients: PatientType[] = patientsData.filter( // Use patientsData from state
             p => p.currentBedId === bed.id && p.stayStartDate && p.stayEndDate && p.status
           );
           return {
@@ -74,11 +78,28 @@ const DepartmentView: React.FC = () => {
     } else {
       setActiveDepartmentGanttData([]);
     }
-  }, [selectedDepartmentId]);
+  }, [selectedDepartmentId, patientsData]); // Add patientsData to dependency array
 
   const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedDepartmentId(event.target.value);
   };
+
+  const handleOpenSidebar = useCallback((patient: PatientType) => {
+    setSelectedPatientForEdit(patient);
+    setIsSidebarOpen(true);
+  }, []);
+
+  const handleCloseSidebar = useCallback(() => {
+    setIsSidebarOpen(false);
+    setSelectedPatientForEdit(null);
+  }, []);
+
+  const handleSavePatient = useCallback((updatedPatient: PatientType) => {
+    setPatientsData(prevPatients => 
+      prevPatients.map(p => p.id === updatedPatient.id ? updatedPatient : p)
+    );
+    handleCloseSidebar();
+  }, [handleCloseSidebar]);
 
   return (
     <div>
@@ -103,11 +124,22 @@ const DepartmentView: React.FC = () => {
       {selectedDepartmentId && activeDepartmentGanttData.length > 0 ? (
         <div>
           <h3>Gantt Chart for {departmentOptions.find(d => d.id === selectedDepartmentId)?.name}</h3>
-          <GanttChart roomsData={activeDepartmentGanttData} timeRange={timeRange} startDate={startDate} />
+          <GanttChart 
+            roomsData={activeDepartmentGanttData} 
+            timeRange={timeRange} 
+            startDate={startDate} 
+            onPatientSelect={handleOpenSidebar} // Pass the handler to GanttChart
+          />
         </div>
       ) : (
         <p>Please select a department or ensure the selected department has room data.</p>
       )}
+      <PatientEditSidebar 
+        patient={selectedPatientForEdit}
+        isOpen={isSidebarOpen}
+        onClose={handleCloseSidebar}
+        onSave={handleSavePatient}
+      />
     </div>
   );
 };

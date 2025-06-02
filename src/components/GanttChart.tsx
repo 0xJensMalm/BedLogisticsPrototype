@@ -13,7 +13,8 @@ type TimeRange = 'week' | 'month';
 interface GanttChartProps {
   timeRange: TimeRange;
   startDate: Date;
-  roomsData: GanttRoom[]; // New prop for dynamic data
+  roomsData: GanttRoom[]; 
+  onPatientSelect?: (patient: PatientType) => void; // Optional callback for patient selection
 }
 
 function getDaysArray(start: Date, end: Date) {
@@ -46,7 +47,7 @@ const statusStyles: Record<string, { bg: string; border?: string; opacity?: numb
   // Removed 'awaiting_placement' and 'discharged' as they are not in Patient.status type
 };
 
-const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate, roomsData }) => {
+const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate, roomsData, onPatientSelect }) => {
   // DEBUG LOGS
   console.log('--- GanttChart DEBUG ---');
   console.log('roomsData prop:', roomsData);
@@ -168,6 +169,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate, roomsData
                           : styles.patientBar
                       }
                       style={styleVars}
+                      onClick={() => onPatientSelect && onPatientSelect(patient)}
                       title={
                         `${patient.name}\nStatus: ${patient.status}\nFra: ${patient.stayStartDate} Til: ${patient.stayEndDate}` +
                         (patient.needs && patient.needs.length > 0 ? `\nBehov: ${patient.needs.join(', ')}` : '')

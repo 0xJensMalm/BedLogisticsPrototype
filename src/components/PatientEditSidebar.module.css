@@ -1,0 +1,115 @@
+.sidebar {
+  position: fixed;
+  right: -400px; /* Start off-screen */
+  top: 0;
+  width: 380px;
+  height: 100vh;
+  background-color: #f8f9fa;
+  border-left: 1px solid #dee2e6;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+  padding: 20px;
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.sidebar.open {
+  right: 0; /* Slide in */
+}
+
+.sidebarHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.sidebarHeader h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  color: #333;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #777;
+  padding: 0;
+  line-height: 1;
+}
+
+.closeButton:hover {
+  color: #333;
+}
+
+.sidebarForm div {
+  margin-bottom: 15px;
+}
+
+.sidebarForm label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.sidebarForm input[type="text"],
+.sidebarForm input[type="date"],
+.sidebarForm select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 0.95rem;
+}
+
+.sidebarForm input:focus,
+.sidebarForm select:focus {
+  border-color: #7b5fc9;
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(123, 95, 201, 0.25);
+}
+
+.formActions {
+  margin-top: 25px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 15px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.saveButton, .cancelButton {
+  padding: 10px 18px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.saveButton {
+  background-color: #7b5fc9;
+  color: white;
+}
+
+.saveButton:hover {
+  background-color: #5a4c8a;
+}
+
+.cancelButton {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.cancelButton:hover {
+  background-color: #bdbdbd;
+}
