@@ -93,19 +93,25 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate, roomsData
       {roomsData.map((room) => (
         <div key={room.id} className={styles.roomFrame}>
           <div className={styles.roomTitle}>{room.label}</div>
+          {room.capabilities && room.capabilities.length > 0 && (
+            <div className={styles.roomCapabilitiesContainer}> {/* New container for room-level tags */}
+              {room.capabilities.map((capability, capIndex) => {
+                const isLargeTag = capability.length > 10; // Example threshold for "large"
+                return (
+                  <span 
+                    key={capIndex} 
+                    className={`${styles.capabilityTag} ${isLargeTag ? styles.capabilityTagLarge : styles.capabilityTagSmall}`}
+                  >
+                    {capability}
+                  </span>
+                );
+              })}
+            </div>
+          )}
 
           {room.beds.map((bed) => (
             <div key={bed.id} className={styles.row}>
               <div className={styles.bedInfoCell}>
-                {room.capabilities && room.capabilities.length > 0 && (
-                  <div className={styles.stackedRoomCapabilities}>
-                    {room.capabilities.map((capability, capIndex) => (
-                      <span key={capIndex} className={styles.capabilityTag}>
-                        {capability}
-                      </span>
-                    ))}
-                  </div>
-                )}
                 <div className={styles.bedNameLabel}>{bed.label}</div>
               </div>
               <div

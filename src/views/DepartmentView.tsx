@@ -20,8 +20,10 @@ const DepartmentView: React.FC = () => {
   const [activeDepartmentGanttData, setActiveDepartmentGanttData] = useState<GanttRoom[]>([]);
   const [timeRange, setTimeRange] = useState<'week' | 'month'>('week');
   const [startDate, setStartDate] = useState<Date>(() => {
-    const today = new Date();
-    return new Date('2025-05-01'); 
+    // Default to the current real-world date.
+    // Note: If current year is not 2025, and patient data is only for 2025,
+    // the chart might appear empty for the current date until navigated to May 2025.
+    return new Date(); 
   });
 
   const departmentOptions = useMemo<DepartmentOption[]>(() => {

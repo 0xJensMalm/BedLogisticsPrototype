@@ -32,14 +32,28 @@
   text-align: left;
 }
 
-.capabilityTag {
-  background-color: #e9e6f5; /* Light purple, similar to reserved bar */
-  color: #5a4c8a; /* Darker purple text */
-  padding: 0.15rem 0.4rem;
+.capabilityTag { /* Base style */
+  background-color: #e9e6f5; 
+  color: #5a4c8a; 
   border-radius: 0.3rem;
-  font-size: 0.75rem;
   font-weight: 500;
   border: 1px solid #d0cbe9;
+  display: flex; /* Use flex to center content */
+  align-items: center; /* Vertically center text */
+  justify-content: flex-start; /* Align text to the start */
+  height: 20px; /* Uniform height for all tags */
+  width: fit-content; /* Adjust width to content */
+  box-sizing: border-box; /* Include padding and border in height */
+}
+
+.capabilityTagSmall {
+  font-size: 0.70rem;
+  padding: 0 0.4rem; /* Adjusted padding for fixed height */
+}
+
+.capabilityTagLarge {
+  font-size: 0.80rem;
+  padding: 0 0.5rem; /* Adjusted padding for fixed height */
 }
 
 .headerRow {
@@ -87,12 +101,13 @@
      The stacking of tags happens *inside* .stackedRoomCapabilities */
 }
 
-.stackedRoomCapabilities {
+.roomCapabilitiesContainer { 
   display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* Tags align to their left */
-  gap: 0.2rem; /* Smaller gap for compact stacking */
-  margin-right: 0.5rem; /* Space between tags and bed name */
+  flex-direction: column; /* Stack tags vertically */
+  align-items: flex-start; /* Align tags to the start of the column */
+  gap: 0.2rem; /* Gap between tags */
+  margin-bottom: 0.6rem; 
+  margin-left: 0.1rem; 
 }
 
 .bedNameLabel {
