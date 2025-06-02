@@ -1,36 +1,33 @@
 import React, { useState } from 'react';
 import Tabs from './components/Tabs';
-import TimeRangeToggle from './components/TimeRangeToggle';
-import GanttChart from './components/GanttChart';
-import MunicipalityView from './views/MunicipalityView/MunicipalityView';
 import './App.css';
 
+import DepartmentView from './views/DepartmentView';
+import AdministrativeView from './views/AdministrativeView';
+import SetupView from './views/SetupView';
+
+export type MainTab = 'Department' | 'Administrative' | 'Setup';
+
 const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'Department' | 'Municipality' | 'Administration'>('Department');
-  const [timeRange, setTimeRange] = useState<'week' | 'month'>('week');
-  const [startDate, setStartDate] = useState<Date>(() => {
-    // Set initial start date to match demo data for best Gantt chart visibility
-    return new Date('2025-05-01');
-  });
+  const [activeMainTab, setActiveMainTab] = useState<MainTab>('Department');
 
   return (
     <div className="App" style={{ background: 'linear-gradient(135deg, #f8f6fb 0%, #f2eaff 100%)', minHeight: '100vh', padding: '2rem' }}>
-      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-        <Tabs activeTab={activeTab} onTabChange={setActiveTab} />
-        {activeTab === 'Department' && (
-          <>
-            <TimeRangeToggle value={timeRange} onChange={setTimeRange} />
-            {/* Date picker can be added here if needed */}
-            <GanttChart timeRange={timeRange} startDate={startDate} />
-          </>
+      <div style={{ maxWidth: '95%', margin: '0 auto' }}>
+        <Tabs<MainTab>
+          activeTab={activeMainTab}
+          onTabChange={setActiveMainTab}
+          tabLabels={['Department', 'Administrative', 'Setup']}
+        />
+        {/* Conditional rendering of the main views */}
+        {activeMainTab === 'Department' && (
+          <DepartmentView />
         )}
-        {activeTab === 'Municipality' && (
-          <MunicipalityView />
+        {activeMainTab === 'Administrative' && (
+          <AdministrativeView />
         )}
-        {activeTab === 'Administration' && (
-          <div>
-            <p>Administration tab content will be here.</p>
-          </div>
+        {activeMainTab === 'Setup' && (
+          <SetupView />
         )}
       </div>
     </div>

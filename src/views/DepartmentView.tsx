@@ -1,0 +1,113 @@
+import React, { useState, useMemo, useEffect } from 'react';
+import { Department, Room as RoomType, Bed as BedType, Patient as PatientType } from '../data/dataTypes';
+import { vossMunicipality } from '../data/municipalityData';
+import { allPatients } from '../data/patients';
+import GanttChart from '../components/GanttChart'; 
+import TimeRangeToggle from '../components/TimeRangeToggle'; 
+
+interface DepartmentOption {
+  id: string;
+  name: string;
+  organisationName: string;
+}
+
+interface GanttRoom extends Omit<RoomType, 'beds'> {
+  beds: Array<Omit<BedType, 'assignedPatientId'> & { patients: PatientType[] }>;
+}
+
+const DepartmentView: React.FC = () => {
+  const [selectedDepartmentId, setSelectedDepartmentId] = useState<string | undefined>();
+  const [activeDepartmentGanttData, setActiveDepartmentGanttData] = useState<GanttRoom[]>([]);
+  const [timeRange, setTimeRange] = useState<'week' | 'month'>('week');
+  const [startDate, setStartDate] = useState<Date>(() => {
+    const today = new Date();
+    return new Date('2025-05-01'); 
+  });
+
+  const departmentOptions = useMemo<DepartmentOption[]>(() => {
+    const options: DepartmentOption[] = [];
+    vossMunicipality.organisations.forEach(org => {
+      org.departments.forEach(dept => {
+        options.push({ id: dept.id, name: dept.name, organisationName: org.name });
+      });
+    });
+    if (options.length > 0 && !selectedDepartmentId) {
+      setSelectedDepartmentId(options[0].id);
+    }
+    return options;
+  }, []); 
+
+  useEffect(() => {
+    if (!selectedDepartmentId) {
+      setActiveDepartmentGanttData([]);
+      return;
+    }
+
+    let foundDepartment: Department | undefined;
+    for (const org of vossMunicipality.organisations) {
+      foundDepartment = org.departments.find(dept => dept.id === selectedDepartmentId);
+      if (foundDepartment) break;
+    }
+
+    if (foundDepartment) {
+      const preparedGanttData: GanttRoom[] = foundDepartment.rooms.map(room => {
+        const bedsWithPatients: GanttRoom['beds'][0][] = room.beds.map(bed => {
+          const assignedPatients: PatientType[] = allPatients.filter(
+            p => p.currentBedId === bed.id && p.stayStartDate && p.stayEndDate && p.status
+          );
+          return {
+            id: bed.id,
+            label: bed.label,
+            patients: assignedPatients,
+          };
+        });
+        return {
+          id: room.id,
+          label: room.label,
+          capabilities: room.capabilities,
+          beds: bedsWithPatients,
+        };
+      });
+      setActiveDepartmentGanttData(preparedGanttData);
+    } else {
+      setActiveDepartmentGanttData([]);
+    }
+  }, [selectedDepartmentId]);
+
+  const handleDepartmentChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedDepartmentId(event.target.value);
+  };
+
+  return (
+    <div>
+      <h2>Department View</h2>
+      <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div>
+          <label htmlFor="department-select" style={{ marginRight: '10px', display: 'block', marginBottom: '5px' }}>Select Department:</label>
+          <select id="department-select" value={selectedDepartmentId || ''} onChange={handleDepartmentChange} style={{ padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}>
+            {departmentOptions.map(option => (
+              <option key={option.id} value={option.id}>
+                {option.organisationName} - {option.name}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label style={{ display: 'block', marginBottom: '5px' }}>Select Time Range:</label>
+          <TimeRangeToggle value={timeRange} onChange={setTimeRange} />
+        </div>
+      </div>
+
+      {selectedDepartmentId && activeDepartmentGanttData.length > 0 ? (
+        <div>
+          <h3>Gantt Chart for {departmentOptions.find(d => d.id === selectedDepartmentId)?.name}</h3>
+          <GanttChart roomsData={activeDepartmentGanttData} timeRange={timeRange} startDate={startDate} />
+        </div>
+      ) : (
+        <p>Please select a department or ensure the selected department has room data.</p>
+      )}
+    </div>
+  );
+};
+
+export default DepartmentView;

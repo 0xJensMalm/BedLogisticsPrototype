@@ -1,15 +1,19 @@
 import React from 'react';
-import { rooms, Room, Bed, Patient } from '../data/bedData';
 import styles from './GanttChart.module.css';
-import patients from '../data/patients.json';
-console.log('Direct import patients:', patients);
+import { Room as RoomType, Bed as BedType, Patient as PatientType } from '../data/dataTypes'; // Import new types
 
+// Define the structure GanttChart expects for its rooms prop
+// This matches the GanttRoom interface from DepartmentView.tsx
+interface GanttRoom extends Omit<RoomType, 'beds'> {
+  beds: Array<Omit<BedType, 'assignedPatientId'> & { patients: PatientType[] }>;
+}
 
 type TimeRange = 'week' | 'month';
 
 interface GanttChartProps {
   timeRange: TimeRange;
   startDate: Date;
+  roomsData: GanttRoom[]; // New prop for dynamic data
 }
 
 function getDaysArray(start: Date, end: Date) {
@@ -22,7 +26,6 @@ function getDaysArray(start: Date, end: Date) {
   return arr;
 }
 
-// Softer pastel palette
 const statusStyles: Record<string, { bg: string; border?: string; opacity?: number }> = {
   active: {
     bg: '#e3d8f6', // softer pastel purple
@@ -40,15 +43,15 @@ const statusStyles: Record<string, { bg: string; border?: string; opacity?: numb
     border: '1.5px solid #bdb6d6',
     opacity: 1,
   },
+  // Removed 'awaiting_placement' and 'discharged' as they are not in Patient.status type
 };
 
-const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
+const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate, roomsData }) => {
   // DEBUG LOGS
   console.log('--- GanttChart DEBUG ---');
-  console.log('rooms from bedData:', rooms);
-  console.log('patients direct import:', patients);
+  console.log('roomsData prop:', roomsData);
   console.log('timeRange:', timeRange, 'startDate:', startDate);
-  // Calculate days for week/month view
+
   const days = React.useMemo(() => {
     let arr: Date[] = [];
     if (timeRange === 'week') {
@@ -65,6 +68,10 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
     return arr;
   }, [timeRange, startDate]);
 
+  if (!roomsData || roomsData.length === 0) {
+    return <p>No department data available to display.</p>;
+  }
+
   return (
     <div className={styles.ganttWrapper}>
       <div className={styles.headerRow}>
@@ -77,15 +84,13 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
           ))}
         </div>
       </div>
-      {rooms.map((room) => (
+      {roomsData.map((room) => (
         <div key={room.id} className={styles.roomFrame}>
-          {/* Simplified room title - just the name */}
           <div className={styles.roomTitle}>{room.label}</div>
 
-          {room.beds.map((bed, bedIndex) => (
-            <div key={bed.id} className={styles.row}> {/* Each bed row */}
-              <div className={styles.bedInfoCell}> {/* Container for bed label area (160px wide) */}
-                {/* Render capabilities for THIS bed's row if capabilities exist */}
+          {room.beds.map((bed) => (
+            <div key={bed.id} className={styles.row}>
+              <div className={styles.bedInfoCell}>
                 {room.capabilities && room.capabilities.length > 0 && (
                   <div className={styles.stackedRoomCapabilities}>
                     {room.capabilities.map((capability, capIndex) => (
@@ -95,7 +100,6 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
                     ))}
                   </div>
                 )}
-                {/* Bed name (e.g., 'Bed 1') */}
                 <div className={styles.bedNameLabel}>{bed.label}</div>
               </div>
               <div
@@ -103,27 +107,31 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
                 style={{ ['--days-count' as any]: days.length }}
               >
                 {bed.patients.map((patient) => {
-                  // Calculate overlap between patient stay and visible timeline
-                  const patientStart = new Date(patient.inDate);
-                  const patientEnd = new Date(patient.outDate);
+                  if (!patient.stayStartDate || !patient.stayEndDate || !patient.status) return null; // Ensure necessary fields exist
+
+                  const patientStart = new Date(patient.stayStartDate);
+                  const patientEnd = new Date(patient.stayEndDate);
 
                   const rangeStart = days[0];
                   const rangeEnd = days[days.length - 1];
-                  // If no overlap, skip
+
                   if (patientEnd < rangeStart || patientStart > rangeEnd) return null;
-                  // Clamp bar to visible range
+
                   const barStart = days.findIndex(d => d >= patientStart && d >= rangeStart);
-                  // The last day the patient is present (inclusive)
                   const barLast = days.findIndex(d => d > patientEnd);
                   const barEnd = barLast === -1 ? days.length : barLast;
 
                   if (barStart === -1 || barStart >= barEnd) return null;
+
+                  const currentStatusStyle = statusStyles[patient.status] || { bg: '#cccccc', opacity: 0.7 }; // Fallback style
+
                   const styleVars: React.CSSProperties = {
                     gridColumn: `${barStart + 1} / ${barEnd + 1}`,
-                    '--patient-bg': statusStyles[patient.status].bg,
-                    '--patient-border': statusStyles[patient.status].border ?? 'none',
-                    '--patient-opacity': statusStyles[patient.status].opacity ?? 1,
+                    '--patient-bg': currentStatusStyle.bg,
+                    '--patient-border': currentStatusStyle.border ?? 'none',
+                    '--patient-opacity': currentStatusStyle.opacity ?? 1,
                   } as any;
+
                   return (
                     <div
                       key={patient.id}
@@ -134,18 +142,16 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate }) => {
                       }
                       style={styleVars}
                       title={
-                        patient.status === 'reserved'
-                          ? `Reserved\n${patient.inDate}–${patient.outDate}`
-                          : `${patient.name}\n${patient.status}\n${patient.inDate}–${patient.outDate}\n${patient.needs}`
+                        `${patient.name}\nStatus: ${patient.status}\nFra: ${patient.stayStartDate} Til: ${patient.stayEndDate}` +
+                        (patient.needs && patient.needs.length > 0 ? `\nBehov: ${patient.needs.join(', ')}` : '')
                       }
                     >
                       <span className={styles.patientName}>
-                        {patient.status === 'reserved' ? 'Reserved' : patient.name}
+                        {patient.name}
                       </span>
-                      {/* Add patient need tag if not reserved and needs exist */}
-                      {patient.status !== 'reserved' && patient.needs && (
+                      {patient.needs && patient.needs.length > 0 && (
                         <span className={styles.patientNeedTag}>
-                          {patient.needs}
+                          {patient.needs.join(', ')} {/* Assuming needs is an array */}
                         </span>
                       )}
                     </div>

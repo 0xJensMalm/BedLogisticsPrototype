@@ -1,27 +1,28 @@
 import React from 'react';
 import styles from './Tabs.module.css';
 
-type Tab = 'Department' | 'Municipality' | 'Administration';
-
-interface TabsProps {
-  activeTab: Tab;
-  onTabChange: (tab: Tab) => void;
+// Make the component generic for the tab type
+interface TabsProps<T extends string> {
+  activeTab: T;
+  onTabChange: (tab: T) => void;
+  tabLabels: T[]; // Array of tab labels, which are also the keys
 }
 
-const Tabs: React.FC<TabsProps> = ({ activeTab, onTabChange }) => {
+// Corrected generic component definition
+function Tabs<T extends string>({ activeTab, onTabChange, tabLabels }: TabsProps<T>) {
   return (
     <div className={styles.tabs}>
-      {(['Department', 'Municipality', 'Administration'] as Tab[]).map((tab) => (
+      {tabLabels.map((tab) => (
         <button
           key={tab}
           className={`${styles.tab} ${activeTab === tab ? styles.active : ''}`}
           onClick={() => onTabChange(tab)}
         >
-          {tab}
+          {tab} // Display the tab label
         </button>
       ))}
     </div>
   );
-};
+}
 
 export default Tabs;
