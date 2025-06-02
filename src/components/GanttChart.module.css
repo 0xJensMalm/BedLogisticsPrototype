@@ -2,8 +2,14 @@
   background: #fff;
   border-radius: 0.5rem;
   box-shadow: 0 2px 12px 0 rgba(160, 130, 220, 0.10);
-  padding: 2rem;
+  padding: 2rem; /* Consider if padding should be on ganttContent instead */
   margin-bottom: 2rem;
+  overflow-x: auto; /* Enable horizontal scrolling */
+}
+
+.ganttContent {
+  /* min-width for (max 31 days * 2 months * 50px/day) + 160px bed header = (62 * 50) + 160 = 3100 + 160 = 3260px */
+  min-width: 3260px; 
 }
 .roomFrame {
   border: 1px solid #edeaf7;
@@ -48,7 +54,7 @@
 }
 .daysHeader {
   display: grid;
-  grid-template-columns: repeat(var(--days-count, 7), 1fr);
+  grid-template-columns: repeat(var(--days-count, 7), minmax(50px, 1fr)); /* Use minmax for responsive columns */
   gap: 0;
   flex: 1;
   border-bottom: 1px solid #edeaf7;
@@ -60,6 +66,7 @@
   font-size: 0.95rem;
   padding: 0.2rem 0;
   border-right: 1px solid #f0eaf7;
+  min-width: 50px; /* Ensure day cells have a minimum width */
 }
 .dayCell:last-child {
   border-right: none;
@@ -99,12 +106,12 @@
 
 .timeline {
   display: grid;
-  grid-template-columns: repeat(var(--days-count, 7), 1fr);
+  grid-template-columns: repeat(var(--days-count, 7), minmax(50px, 1fr)); /* Use minmax for responsive columns */
   gap: 0;
   flex: 1;
   position: relative;
   min-height: 36px;
-  overflow: hidden;
+  /* overflow: hidden; /* Removed to prevent clipping patient bars, scrolling handled by ganttWrapper */
   border-bottom: 1px solid #f3eefb;
 }
 

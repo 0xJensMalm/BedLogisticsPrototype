@@ -59,11 +59,16 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate, roomsData
       const end = new Date(start);
       end.setDate(start.getDate() + 6);
       arr = getDaysArray(start, end);
-    } else {
-      const year = startDate.getFullYear();
-      const month = startDate.getMonth();
-      const daysInMonth = new Date(year, month + 1, 0).getDate();
-      arr = Array.from({ length: daysInMonth }, (_, i) => new Date(year, month, i + 1));
+    } else { // timeRange === 'month'
+      const currentMonthStart = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+      const currentMonthEnd = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 0); // Last day of current month
+      const daysCurrentMonth = getDaysArray(currentMonthStart, currentMonthEnd);
+
+      const nextMonthStart = new Date(startDate.getFullYear(), startDate.getMonth() + 1, 1); // First day of next month
+      const nextMonthEnd = new Date(startDate.getFullYear(), startDate.getMonth() + 2, 0); // Last day of next month
+      const daysNextMonth = getDaysArray(nextMonthStart, nextMonthEnd);
+
+      arr = daysCurrentMonth.concat(daysNextMonth);
     }
     return arr;
   }, [timeRange, startDate]);
@@ -74,9 +79,10 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate, roomsData
 
   return (
     <div className={styles.ganttWrapper}>
-      <div className={styles.headerRow}>
+      <div className={styles.ganttContent}>
+        <div className={styles.headerRow}>
         <div className={styles.bedHeader}>Rom / Seng</div>
-        <div className={styles.daysHeader} style={{ gridTemplateColumns: `repeat(${days.length}, 1fr)` }}>
+        <div className={styles.daysHeader} style={{ gridTemplateColumns: `repeat(${days.length}, minmax(50px, 1fr))` }}>
           {days.map((date) => (
             <div key={date.toISOString()} className={styles.dayCell}>
               {date.getDate()}
@@ -104,23 +110,38 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate, roomsData
               </div>
               <div
                 className={styles.timeline}
-                style={{ ['--days-count' as any]: days.length }}
+                style={{ ['--days-count' as any]: days.length, gridTemplateColumns: `repeat(${days.length}, minmax(50px, 1fr))` }}
               >
                 {bed.patients.map((patient) => {
                   if (!patient.stayStartDate || !patient.stayEndDate || !patient.status) return null; // Ensure necessary fields exist
 
                   const patientStart = new Date(patient.stayStartDate);
                   const patientEnd = new Date(patient.stayEndDate);
-
                   const rangeStart = days[0];
                   const rangeEnd = days[days.length - 1];
 
                   if (patientEnd < rangeStart || patientStart > rangeEnd) return null;
 
-                  const barStart = days.findIndex(d => d >= patientStart && d >= rangeStart);
-                  const barLast = days.findIndex(d => d > patientEnd);
-                  const barEnd = barLast === -1 ? days.length : barLast;
+                  // Ensure patientStart is not before rangeStart for calculation
+                  const effectivePatientStart = patientStart < rangeStart ? rangeStart : patientStart;
+                  // Ensure patientEnd is not after rangeEnd for calculation
+                  const effectivePatientEnd = patientEnd > rangeEnd ? rangeEnd : patientEnd;
+                  
+                  let barStart = days.findIndex(d => 
+                      d.getFullYear() === effectivePatientStart.getFullYear() &&
+                      d.getMonth() === effectivePatientStart.getMonth() &&
+                      d.getDate() === effectivePatientStart.getDate()
+                  );
 
+                  // Calculate end index: find first day *after* patientEnd
+                  let barLast = days.findIndex(d => d > effectivePatientEnd);
+                  let barEnd = barLast === -1 ? days.length : barLast;
+
+                  // If patient starts before the viewable range but ends within it
+                  if (barStart === -1 && patientStart < rangeStart && patientEnd >= rangeStart) {
+                      barStart = 0;
+                  }
+                  
                   if (barStart === -1 || barStart >= barEnd) return null;
 
                   const currentStatusStyle = statusStyles[patient.status] || { bg: '#cccccc', opacity: 0.7 }; // Fallback style
@@ -162,6 +183,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ timeRange, startDate, roomsData
           ))}
         </div>
       ))}
+      </div> {/* Closing ganttContent */}
     </div>
   );
 };
