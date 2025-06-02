@@ -18,7 +18,7 @@ function Tabs<T extends string>({ activeTab, onTabChange, tabLabels }: TabsProps
           className={`${styles.tab} ${activeTab === tab ? styles.active : ''}`}
           onClick={() => onTabChange(tab)}
         >
-          {tab} // Display the tab label
+          {tab} 
         </button>
       ))}
     </div>

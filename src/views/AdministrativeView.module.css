@@ -1,38 +1,127 @@
+/* AdministrativeView.module.css */
 .administrativeViewContainer {
   padding: 20px;
   font-family: Arial, sans-serif;
 }
 
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+/* New Top Metrics Section Styles */
+.topMetricsSection {
+  display: flex;
+  flex-direction: row; /* Default, but explicit */
+  gap: 20px; /* Space between left and right containers */
   margin-bottom: 30px;
 }
 
-.statCard {
+.municipalityMetricsContainer,
+.organisationsMetricsContainer {
+  flex: 1; /* Each container takes up half the space */
+  padding: 20px;
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  padding: 20px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  text-align: center;
 }
 
-.statCard h4 {
+.municipalityMetricsContainer h3,
+.organisationsMetricsContainer h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.3em;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 10px;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 15px;
+  margin-top: 10px; /* Adjusted from 15px to align better with h3 padding */
+}
+
+.metricCard {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  min-height: 100px; /* Ensure cards have some minimum height */
+  justify-content: center; /* Center content vertically */
+}
+
+.metricLabel {
+  font-size: 0.85em;
+  color: #6c757d;
+  margin-bottom: 8px; /* Increased spacing */
+  font-weight: 500;
+}
+
+.metricValue {
+  font-size: 1.5em; /* Slightly larger for more impact */
+  font-weight: bold;
+  color: #212529;
+  line-height: 1.2;
+}
+
+.metricCardOccupancy .progressBarContainer {
+  width: 90%; /* Progress bar takes most of card width */
+  margin-top: 10px;
+} /* Adjust as needed for alignment */
+
+.organisationStatCard {
+  background-color: #f9f9f9;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.organisationStatCard h4 {
   margin-top: 0;
   margin-bottom: 10px;
-  color: #333;
+  color: #0056b3; /* Different color for org names */
   font-size: 1.1em;
 }
 
-.statCard p {
-  margin: 0;
-  font-size: 2em;
-  font-weight: bold;
-  color: #007bff; /* A primary color, can be adjusted */
+.orgTitleLink {
+  color: inherit; /* Inherit color from h4 */
+  text-decoration: none;
 }
 
+.orgTitleLink:hover,
+.orgTitleLink:focus {
+  text-decoration: underline;
+  color: #004085; /* Darken color on hover/focus */
+}
+
+.progressBarContainer {
+  background-color: #e9ecef; /* Light grey background */
+  border-radius: .25rem; /* Bootstrap-like rounded corners */
+  height: 12px; /* Slightly taller for better visibility */
+  margin-top: 6px;
+  width: 100%; 
+  overflow: hidden; 
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+}
+
+.progressBarFill {
+  background-color: #007bff; /* Primary blue */
+  height: 100%;
+  border-radius: .25rem; /* Match container */
+  transition: width 0.6s ease-in-out;
+  display: flex; /* For potential future text inside bar */
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.7rem;
+}
+
+
+/* Styles for Gantt chart section remain largely the same */
 .organisationSection {
   margin-bottom: 20px;
   border: 1px solid #eee;
